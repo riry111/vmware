@@ -1,0 +1,24 @@
+---
+- name: get vmware guest fact
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+    - vcinfo.yml
+  vars:
+   - guestname: myvm
+
+  tasks:
+
+   - name: vm facts
+     vmware_guest_facts:
+       hostname: "{{ vchost }}"
+       username: "{{ vcuser }}"
+       password: "{{ vcpass }}"
+       name: "{{ guestname }}"
+       validate_certs: False
+     register: myvm_facts
+
+   - name: debug message
+     debug:
+       msg: "{{ myvm_facts }}"

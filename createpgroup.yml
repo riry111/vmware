@@ -1,0 +1,28 @@
+---
+- name: portgroup(VST))作成
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+   - vcinfo.yml
+  vars:
+   - switch: vSwitch0
+   - vlan_id: 100
+   - pgname: "Network-{{ vlan_id }}"
+
+  tasks:
+
+  - name: portgroup作成
+    vmware_portgroup:
+      validate_certs: no
+      hostname: "{{ vchost }}"
+      username: "{{ vcuser }}"
+      password: "{{ vcpass }}"
+      switch_name: "{{ switch }}"
+      portgroup_name: "{{ pgname }}"
+      vlan_id: "{{ vlan_id }}"
+    register: mypg_facts
+
+  - name: 作成したportgroup情報の表示
+    debug:
+      msg: "{{ mypg_facts }}"

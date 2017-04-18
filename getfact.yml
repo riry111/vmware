@@ -1,0 +1,25 @@
+---
+- name: ゲストのFACT情報を取得
+  hosts: all
+  connection: local
+  gather_facts: False
+  vars_files:
+   - vcinfo.yml
+  vars:
+   - guestname: myvm
+
+  tasks:
+
+  - name: FACT情報取得
+    vsphere_guest:
+      vcenter_hostname: "{{ vchost }}"
+      username: "{{ vcuser }}"
+      password: "{{ vcpass }}"
+      guest: "{{ guestname }}"
+      validate_certs: no
+      vmware_guest_facts: yes
+    register: rhel6_facts
+
+  - name: 結果表示
+    debug:
+      msg: "{{ rhel6_facts }}"

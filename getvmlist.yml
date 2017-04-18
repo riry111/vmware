@@ -1,0 +1,23 @@
+---
+- name: ゲストの一覧を取得
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+    - vcinfo.yml
+  vars:
+   - guestname: myvm
+
+  tasks:
+
+   - name: ゲストの一覧情報取得
+     vmware_vm_facts:
+       hostname: "{{ vchost }}"
+       username: "{{ vcuser }}"
+       password: "{{ vcpass }}"
+       validate_certs: no
+     register: myvm_facts
+
+   - name: 結果表示
+     debug:
+       msg: "{{ myvm_facts }}"

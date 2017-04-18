@@ -1,0 +1,43 @@
+---
+- name: VMwareゲストの削除
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+   - vcinfo.yml
+  vars:
+   - vmname: newrhel6
+   - mydc: DC01
+
+  tasks:
+
+  - name: ゲストの電源をOFFに
+    vmware_guest:
+      validate_certs: no
+      hostname: "{{ vchost }}"
+      username: "{{ vcuser }}"
+      password: "{{ vcpass }}"
+      name: "{{ vmname }}"
+      datacenter: "{{ mydc }}"
+      state: poweredoff
+    register: power_status
+
+  - name: OFFになるまで待つ(1分)
+    pause:
+      seconds: 60
+    when: power_status.changed
+  
+  - name: ゲストの削除
+    vmware_guest:
+      validate_certs: no
+      hostname: "{{ vchost }}"
+      username: "{{ vcuser }}"
+      password: "{{ vcpass }}"
+      name: "{{ vmname }}"
+      datacenter: "{{ mydc }}"
+      state: absent
+    register: myvm_facts
+
+  - name: 削除結果の表示
+    debug:
+      msg: "{{ myvm_facts }}"

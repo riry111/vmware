@@ -1,0 +1,41 @@
+---
+- name: VMWareゲストの作成
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  vars_files:
+   - vcinfo.yml
+  vars:
+   - guestname: rhel6
+   - prefix: myvm
+   - mytemplate: rhel6-vmw
+   - mydc: DC01
+   - myds: Datastore
+   - mynetwork: VM Network
+
+  tasks:
+
+  - name: ゲスト作成(1つ) - 電源ONおよびIPアドレスアサインを待つ
+    vmware_guest:
+      validate_certs: no
+      hostname: "{{ vchost }}"
+      username: "{{ vcuser }}"
+      password: "{{ vcpass }}"
+      name: "{{ prefix }}"
+      template: "{{ mytemplate }}"
+      datacenter: "{{ mydc }}"
+      state: poweron
+      wait_for_ip_address: yes
+      disk:
+        - size_gb: 5
+          type: thin
+          datastore: "{{ myds }}"
+      nic:
+        - type: vmxnet3
+          network: "{{ mynetwork }}"
+          network_type: standar
+    register: myvm_facts
+
+  - name: 作成したVM情報の表示
+    debug:
+      msg: "{{ myvm_facts }}"
