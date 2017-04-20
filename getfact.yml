@@ -6,7 +6,7 @@
   vars_files:
    - vcinfo.yml
   vars:
-   - guestname: myvm
+   - guestname: rhel6
 
   tasks:
 
