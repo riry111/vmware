@@ -1,0 +1,19 @@
+---
+- name: Insightsへの登録作業
+  hosts: all
+    
+  become: yes
+  become_user: root
+
+  tasks:
+
+  - name: Insightsパッケージのインストール
+    yum: name=redhat-access-insights state=latest
+
+  - name: Insightsの登録状況の確認
+    stat: path=/etc/redhat-access-insights/.registered
+    register: unreg
+
+  - name: 登録
+    command: redhat-access-insights --register creates=/etc/redhat-access-insights/.registered
+    when: unreg.stat.exists == false

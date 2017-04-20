@@ -1,0 +1,35 @@
+---
+- name: Satellite 6 (alpha.osaka.redhat.com)のRed_Hat_Japan_Westへ登録
+  hosts: all
+  vars:
+#    - satellite: alpha.osaka.redhat.com
+    - satellite: satellite.example.com
+#    - org: Red_Hat_Japan_West
+    - org: Default Organization
+#    - activationkey: RHEL7-library
+    - activationkey: rhel6
+    
+  become: yes
+  become_user: root
+  tasks:
+
+  - name: Satellite登録のための基本パッケージ追加
+    shell: yum -y --nogpgcheck localinstall http://{{satellite}}/pub/katello-ca-consumer-latest.noarch.rpm
+
+  - name: Satelliteへの登録
+    redhat_subscription:
+      org_id: '{{org}}'
+      activationkey: '{{activationkey}}'
+
+  - name: Satellite6用toolリポジトリの有効化
+    shell: subscription-manager repos --enable=rhel-7-server-satellite-tools-6.2-rpms
+
+  - name: Satelliteエージェントの導入
+    yum: name=katello-agent state=latest
+
+  - name: Satelliteが利用するsshキーの登録
+    authorized_key:
+      user: root
+      state: present
+      key: https://{{satellite}}:9090/ssh/pubkey
+
