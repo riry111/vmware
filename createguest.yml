@@ -24,7 +24,7 @@
       name: "{{ prefix }}"
       template: "{{ mytemplate }}"
       datacenter: "{{ mydc }}"
-      state: poweron
+      state: poweredon
       wait_for_ip_address: yes
       disk:
         - size_gb: 5
