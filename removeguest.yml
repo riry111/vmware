@@ -6,7 +6,7 @@
   vars_files:
    - vcinfo.yml
   vars:
-   - vmname: newrhel6
+   - vmname: myvm
    - mydc: DC01
 
   tasks:
